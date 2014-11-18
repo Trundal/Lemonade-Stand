@@ -45,23 +45,36 @@ class ViewController: UIViewController {
     var todayLabelContainer: UIView!
     // -- todayInventory Sub-Views --
     var todayInventoryContainer: UIView!
-    var todayInventoryMoneyContainer: UIImageView!
-    var todayInventoryLemonsContainer: UIImageView!
-    var todayInventoryIceContainer: UIImageView!
+    var todayInventoryMoneyContainer: UIView!
+    var todayInventoryLemonsContainer: UIView!
+    var todayInventoryIceContainer: UIView!
+    // ---- todayInventory Sub-Image Views ----
+    var todayInventoryMoneyImage: UIImageView!
+    var todayInventoryLemonsImage: UIImageView!
+    var todayInventoryIceImage: UIImageView!
     // -- todayMixContainer Sub-Views --
     var todayMixContainer: UIView!
-    var todayMixAcidityContainer: UIImageView!
-    var todayMixLemonsContainer: UIImageView!
-    var todayMixIceContainer: UIImageView!
+    var todayMixAcidityContainer: UIView!
+    var todayMixLemonsContainer: UIView!
+    var todayMixIceContainer: UIView!
+    // ---- todayMix Sub-Image Views ----
+    var todayMixAcidityImage: UIImageView!
+    var todayMixLemonsImage: UIImageView!
+    var todayMixIceImage: UIImageView!
     // -- todayWeatherContainer Sub-Views --
     var todayWeatherStartContainer: UIView!
     var todayWeatherContainer: UIView!
     var todayStartButtonContainer: UIImageView!
     // -- yesterdayResultsContainer Sub-Views --
-    var yesterdayWeatherContainer: UIImageView!
-    var yesterdayAcidityContainer: UIImageView!
-    var yesterdayVisitorsContainer: UIImageView!
-    var yesterdaySalesContainer: UIImageView!
+    var yesterdayWeatherContainer: UIView!
+    var yesterdayAcidityContainer: UIView!
+    var yesterdayVisitorsContainer: UIView!
+    var yesterdaySalesContainer: UIView!
+    // ---- todayMix Sub-Image Views ----
+    var yesterdayWeatherImage: UIImageView!
+    var yesterdayAcidityImage: UIImageView!
+    var yesterdayVisitorsImage: UIImageView!
+    var yesterdaySalesImage: UIImageView!
     
     
     // CONSTANTS
@@ -87,6 +100,7 @@ class ViewController: UIViewController {
     let kColumnWeatherStart1:CGFloat = 0.5
     let kColumnWeatherStart2:CGFloat = 0.5
     let kColumnYesterday:CGFloat = 0.25
+    
     
     
     override func viewDidLoad() {
@@ -117,7 +131,7 @@ class ViewController: UIViewController {
         self.view.addSubview(todayContainer)
         setupTodayContainer(todayContainer)
         
-        yesterdayContainer = UIView(frame: CGRect(x: 0, y: titleLabelContainer.frame.height + todayContainer.frame.height, width: self.view.bounds.width, height: self.view.bounds.height * kTodayContainerHeight))
+        yesterdayContainer = UIView(frame: CGRect(x: 0, y: titleLabelContainer.frame.height + todayContainer.frame.height, width: self.view.bounds.width, height: self.view.bounds.height * kYesterdayContainerHeight))
         yesterdayContainer.backgroundColor = UIColor(red: (240/255), green: (244/255), blue: (250/255), alpha: 100)
         self.view.addSubview(yesterdayContainer)
         setupYesterdayContainer(yesterdayContainer)
@@ -189,136 +203,193 @@ class ViewController: UIViewController {
     }
     
     
+    // INVENTORY CONTAINERS
+    
     func setupInventoryContainers(containerView: UIView) {
-        todayInventoryMoneyContainer = UIImageView(frame: CGRect(x: containerView.bounds.width * kColumnBorder, y: 20, width: 107.0, height: 104.0))
+        
+        // INVENTORY MONEY CONTAINTER
+        
+        todayInventoryMoneyContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder, y: 0, width: containerView.bounds.width * kColumnInvMix1, height: containerView.bounds.height))
+        todayInventoryMoneyImage = UIImageView(frame: CGRect(x: (todayInventoryMoneyContainer.bounds.width - 107) / 2, y: (containerView.bounds.height - 104) / 2, width: 107.0, height: 104.0))
         containerView.addSubview(todayInventoryMoneyContainer)
         
         var titlePosition = todayInventoryMoneyContainer.center
         titlePosition.x = todayInventoryMoneyContainer.bounds.width/2
-        titlePosition.y -= 3
+        titlePosition.y = todayInventoryMoneyContainer.bounds.height/2 + 18
         moneyInventoryLabel = UILabel()
-        configPrimaryFontLabel(moneyInventoryLabel, fontSize: 18, text: "$10")
+        configPrimaryFontLabel(moneyInventoryLabel, fontSize: 24, text: "$10")
         moneyInventoryLabel.center = titlePosition
         
-        todayInventoryMoneyContainer.image = UIImage(named: "Star Icon")
+        todayInventoryMoneyImage.image = UIImage(named: "Star Icon")
+        todayInventoryMoneyContainer.addSubview(todayInventoryMoneyImage)
         todayInventoryMoneyContainer.addSubview(moneyInventoryLabel)
+    
+        // INVENTORY LEMONS CONTAINER
         
-        todayInventoryLemonsContainer = UIImageView(frame: CGRect(x: ((containerView.bounds.width * kColumnBorder) + todayInventoryMoneyContainer.bounds.width), y: todayInventoryContainer.bounds.height/2-15, width: 75.0, height: 54.0))
+        todayInventoryLemonsContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder + todayInventoryMoneyContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnInvMix2, height: containerView.bounds.height))
+        todayInventoryLemonsImage = UIImageView(frame: CGRect(x: (todayInventoryLemonsContainer.bounds.width - 75) / 2, y: ((containerView.bounds.height - 54) / 2) + 10, width: 75.0, height: 54.0))
         containerView.addSubview(todayInventoryLemonsContainer)
         
         titlePosition = todayInventoryLemonsContainer.center
-        titlePosition.x = todayInventoryLemonsContainer.bounds.width/2+13
-        titlePosition.y = todayInventoryLemonsContainer.bounds.height/2
+        titlePosition.x = todayInventoryLemonsContainer.bounds.width/2 + 13
+        titlePosition.y = todayInventoryLemonsContainer.bounds.height/2 + 8
         lemonsInventoryLabel = UILabel()
         configPrimaryFontLabel(lemonsInventoryLabel, fontSize: 24, text: "1")
         lemonsInventoryLabel.center = titlePosition
         
-        todayInventoryLemonsContainer.image = UIImage(named: "Lemon Inventory Icon")
+        todayInventoryLemonsImage.image = UIImage(named: "Lemon Inventory Icon")
+        todayInventoryLemonsContainer.addSubview(todayInventoryLemonsImage)
         todayInventoryLemonsContainer.addSubview(lemonsInventoryLabel)
         
-        todayInventoryIceContainer = UIImageView(frame: CGRect(x: (containerView.bounds.width * kColumnBorder + todayInventoryMoneyContainer.bounds.width + todayInventoryLemonsContainer.bounds.width + 5), y: todayInventoryContainer.bounds.height/2-15, width: 80, height: 55))
+        // INVENTORY ICE CONTAINER
+        
+        todayInventoryIceContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder + todayInventoryMoneyContainer.bounds.width + todayInventoryLemonsContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnInvMix3, height: containerView.bounds.height))
+        todayInventoryIceImage = UIImageView(frame: CGRect(x: (todayInventoryIceContainer.bounds.width - 80) / 2, y: ((containerView.bounds.height - 55) / 2) + 10, width: 80.0, height: 55.0))
         containerView.addSubview(todayInventoryIceContainer)
         
         titlePosition = todayInventoryIceContainer.center
-        titlePosition.x = todayInventoryIceContainer.bounds.width/2+13
-        titlePosition.y = todayInventoryIceContainer.bounds.height/2
+        titlePosition.x = todayInventoryIceContainer.bounds.width/2 + 12
+        titlePosition.y = todayInventoryIceContainer.bounds.height/2 + 9
         iceInventoryLabel = UILabel()
         configPrimaryFontLabel(iceInventoryLabel, fontSize: 24, text: "1")
         iceInventoryLabel.center = titlePosition
         
-        todayInventoryIceContainer.image = UIImage(named: "Ice Inventory Icon")
+        todayInventoryIceImage.image = UIImage(named: "Ice Inventory Icon")
+        todayInventoryIceContainer.addSubview(todayInventoryIceImage)
         todayInventoryIceContainer.addSubview(iceInventoryLabel)
-        
-        
+
     }
+    
+    // MIX CONTAINERS
     
     func setupMixContainers(containerView: UIView) {
         
-        todayMixAcidityContainer = UIImageView(frame: CGRect(x: containerView.bounds.width * kColumnBorder, y: 0, width: containerView.bounds.width * kColumnInvMix1, height: containerView.bounds.height))
+        // MIX ACIDITY CONTAINTER
+        
+        todayMixAcidityContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder, y: 0, width: containerView.bounds.width * kColumnInvMix1, height: containerView.bounds.height))
+        todayMixAcidityImage = UIImageView(frame: CGRect(x: (todayMixAcidityContainer.bounds.width - 74) / 2, y: (containerView.bounds.height - 68) / 2, width: 74.0, height: 68.0))
         containerView.addSubview(todayMixAcidityContainer)
         
-        var titlePosition = self.todayMixAcidityContainer.center
-        titlePosition.x = todayMixAcidityContainer.bounds.width/2
+        var titlePosition = todayMixAcidityContainer.center
+        titlePosition.x = todayMixAcidityContainer.bounds.width/2 + 3
+        titlePosition.y = todayMixAcidityContainer.bounds.height - 25
         acidityMixLabel = UILabel()
-        configPrimaryFontLabel(acidityMixLabel, fontSize: 18, text: "Acidity")
+        configPrimaryFontLabel(acidityMixLabel, fontSize: 18, text: "Strong (.6)")
         acidityMixLabel.center = titlePosition
+        
+        todayMixAcidityImage.image = UIImage(named: "Lemonade Icon")
+        todayMixAcidityContainer.addSubview(todayMixAcidityImage)
         todayMixAcidityContainer.addSubview(acidityMixLabel)
         
-        todayMixLemonsContainer = UIImageView(frame: CGRect(x: ((containerView.bounds.width * kColumnBorder) + todayMixAcidityContainer.bounds.width), y: 0, width: containerView.bounds.width * kColumnInvMix2, height: containerView.bounds.height))
+        // MIX LEMONS CONTAINER
+        
+        todayMixLemonsContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder + todayMixAcidityContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnInvMix2, height: containerView.bounds.height))
+        todayMixLemonsImage = UIImageView(frame: CGRect(x: (todayMixLemonsContainer.bounds.width - 49) / 2, y: ((containerView.bounds.height - 54) / 2) + 10, width: 49.0, height: 53.0))
         containerView.addSubview(todayMixLemonsContainer)
         
-        titlePosition = self.todayMixLemonsContainer.center
-        titlePosition.x = todayMixLemonsContainer.bounds.width/2
+        titlePosition = todayMixLemonsContainer.center
+        titlePosition.x = todayMixLemonsContainer.bounds.width/2 + 13
+        titlePosition.y = todayMixLemonsContainer.bounds.height/2 + 8
         lemonsMixLabel = UILabel()
-        configPrimaryFontLabel(lemonsMixLabel, fontSize: 18, text: "Lemons")
+        configPrimaryFontLabel(lemonsMixLabel, fontSize: 24, text: "0")
         lemonsMixLabel.center = titlePosition
+        
+        todayMixLemonsImage.image = UIImage(named: "Lemon Icon")
+        todayMixLemonsContainer.addSubview(todayMixLemonsImage)
         todayMixLemonsContainer.addSubview(lemonsMixLabel)
         
-        todayMixIceContainer = UIImageView(frame: CGRect(x: (containerView.bounds.width * kColumnBorder + todayMixAcidityContainer.bounds.width + todayMixLemonsContainer.bounds.width), y: 0, width: containerView.bounds.width * kColumnInvMix3, height: containerView.bounds.height))
+        // MIX ICE CONTAINER
+        
+        todayMixIceContainer = UIView(frame: CGRect(x: containerView.bounds.width * kColumnBorder + todayMixAcidityContainer.bounds.width + todayMixLemonsContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnInvMix3, height: containerView.bounds.height))
+        todayMixIceImage = UIImageView(frame: CGRect(x: (todayMixIceContainer.bounds.width - 54) / 2, y: ((containerView.bounds.height - 55) / 2) + 10, width: 54.0, height: 55.0))
         containerView.addSubview(todayMixIceContainer)
         
-        titlePosition = self.todayMixIceContainer.center
-        titlePosition.x = todayMixIceContainer.bounds.width/2
+        titlePosition = todayMixIceContainer.center
+        titlePosition.x = todayMixIceContainer.bounds.width/2 + 12
+        titlePosition.y = todayMixIceContainer.bounds.height/2 + 9
         iceMixLabel = UILabel()
-        configPrimaryFontLabel(iceMixLabel, fontSize: 18, text: "Ice Cubes")
+        configPrimaryFontLabel(iceMixLabel, fontSize: 24, text: "1")
         iceMixLabel.center = titlePosition
+        
+        todayMixIceImage.image = UIImage(named: "Ice Icon")
+        todayMixIceContainer.addSubview(todayMixIceImage)
         todayMixIceContainer.addSubview(iceMixLabel)
         
     }
     
+    // YESTERDAY CONTAINER
+    
     func setupYesterdayContainer(containerView: UIView) {
         
-        var titlePosition = containerView.center
-        titlePosition.y = 15
+        // YESTERDAY MASTER CONTAINER (Incl. Title Header)
+        
         yesterdayResultsLabel = UILabel()
         configPrimaryFontLabel(yesterdayResultsLabel, fontSize: 18, text: "Yesterday's Results")
-        yesterdayResultsLabel.center = titlePosition
+        yesterdayResultsLabel.center = configCenterPoint(containerView, xOffset: 2.0, yOffset: 6.0)
         containerView.addSubview(yesterdayResultsLabel)
         
-        yesterdayWeatherContainer = UIImageView(frame: CGRect(x: 0, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
-        containerView.addSubview(yesterdayWeatherContainer)
+        // YESTERDAY WEATHER CONTAINTER
         
-        titlePosition = yesterdayWeatherContainer.center
-        titlePosition.x = yesterdayWeatherContainer.bounds.width/2
-        titlePosition.y = yesterdayWeatherContainer.bounds.height/6
+        yesterdayWeatherContainer = UIView(frame: CGRect(x: 0, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
+        containerView.addSubview(yesterdayWeatherContainer)
+        yesterdayWeatherImage = UIImageView(frame: CGRect(x: (yesterdayWeatherContainer.bounds.width - 37) / 2, y: ((containerView.bounds.height - 37) / 2), width: 37.0, height: 37.0))
+        
         yesterdayWeatherLabel = UILabel()
         configPrimaryFontLabel(yesterdayWeatherLabel, fontSize: 14, text: "Weather")
-        yesterdayWeatherLabel.center = titlePosition
+        yesterdayWeatherLabel.center = configCenterPoint(yesterdayWeatherContainer, xOffset: 2.0, yOffset: 1.35)
+        
+        yesterdayWeatherImage.image = UIImage(named: "Warm")
+        yesterdayWeatherContainer.addSubview(yesterdayWeatherImage)
         yesterdayWeatherContainer.addSubview(yesterdayWeatherLabel)
         
-        yesterdayAcidityContainer = UIImageView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
-        containerView.addSubview(yesterdayAcidityContainer)
+        // YESTERDAY ACIDITY CONTAINTER
         
-        titlePosition = yesterdayAcidityContainer.center
-        titlePosition.x = yesterdayAcidityContainer.bounds.width/2
-        titlePosition.y = yesterdayAcidityContainer.bounds.height/6
+        yesterdayAcidityContainer = UIView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
+        containerView.addSubview(yesterdayAcidityContainer)
+        yesterdayAcidityImage = UIImageView(frame: CGRect(x: (yesterdayAcidityContainer.bounds.width - 37) / 2, y: ((containerView.bounds.height - 37) / 2), width: 37.0, height: 37.0))
+        
         yesterdayAcidityLabel = UILabel()
-        configPrimaryFontLabel(yesterdayAcidityLabel, fontSize: 14, text: "Acidity")
-        yesterdayAcidityLabel.center = titlePosition
+        configPrimaryFontLabel(yesterdayAcidityLabel, fontSize: 14, text: "Strong")
+        yesterdayAcidityLabel.center = configCenterPoint(yesterdayAcidityContainer, xOffset: 2.0, yOffset: 1.35)
+        
+        yesterdayAcidityImage.image = UIImage(named: "Lemonade Icon (small)")
+        yesterdayAcidityContainer.addSubview(yesterdayAcidityImage)
         yesterdayAcidityContainer.addSubview(yesterdayAcidityLabel)
         
-        yesterdayVisitorsContainer = UIImageView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width + yesterdayAcidityContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
-        containerView.addSubview(yesterdayVisitorsContainer)
+        // YESTERDAY VISITORS CONTAINTER
         
-        titlePosition = yesterdayVisitorsContainer.center
-        titlePosition.x = yesterdayVisitorsContainer.bounds.width/2
-        titlePosition.y = yesterdayVisitorsContainer.bounds.height/6
+        yesterdayVisitorsContainer = UIView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width + yesterdayAcidityContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
+        containerView.addSubview(yesterdayVisitorsContainer)
+        yesterdayVisitorsImage = UIImageView(frame: CGRect(x: (yesterdayVisitorsContainer.bounds.width - 37) / 2, y: ((containerView.bounds.height - 37) / 2), width: 37.0, height: 37.0))
+        
         yesterdayVisitorsLabel = UILabel()
-        configPrimaryFontLabel(yesterdayVisitorsLabel, fontSize: 14, text: "Visitors")
-        yesterdayVisitorsLabel.center = titlePosition
+        configPrimaryFontLabel(yesterdayVisitorsLabel, fontSize: 14, text: "0 Visitors")
+        yesterdayVisitorsLabel.center = configCenterPoint(yesterdayVisitorsContainer, xOffset: 2.0, yOffset: 1.35)
+        
+        yesterdayVisitorsImage.image = UIImage(named: "customers-icon")
+        yesterdayVisitorsContainer.addSubview(yesterdayVisitorsImage)
         yesterdayVisitorsContainer.addSubview(yesterdayVisitorsLabel)
         
-        yesterdaySalesContainer = UIImageView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width + yesterdayAcidityContainer.bounds.width + yesterdayVisitorsContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
-        containerView.addSubview(yesterdaySalesContainer)
+        // YESTERDAY SALES CONTAINTER
         
-        titlePosition = yesterdaySalesContainer.center
-        titlePosition.x = yesterdaySalesContainer.bounds.width/2
-        titlePosition.y = yesterdaySalesContainer.bounds.height/6
+        yesterdaySalesContainer = UIView(frame: CGRect(x: yesterdayWeatherContainer.bounds.width + yesterdayAcidityContainer.bounds.width + yesterdayVisitorsContainer.bounds.width, y: 0, width: containerView.bounds.width * kColumnYesterday, height: containerView.bounds.height))
+        containerView.addSubview(yesterdaySalesContainer)
+        yesterdaySalesImage = UIImageView(frame: CGRect(x: (yesterdaySalesContainer.bounds.width - 44) / 2, y: ((containerView.bounds.height - 25) / 2), width: 44.0, height: 25.0))
+        
         yesterdaySalesLabel = UILabel()
-        configPrimaryFontLabel(yesterdaySalesLabel, fontSize: 14, text: "Sales")
-        yesterdaySalesLabel.center = titlePosition
+        configPrimaryFontLabel(yesterdaySalesLabel, fontSize: 14, text: "$0 Sales")
+        yesterdaySalesLabel.center = configCenterPoint(yesterdaySalesContainer, xOffset: 2.0, yOffset: 1.35)
+        
+        yesterdaySalesImage.image = UIImage(named: "money_icon")
+        yesterdaySalesContainer.addSubview(yesterdaySalesImage)
         yesterdaySalesContainer.addSubview(yesterdaySalesLabel)
         
+        
+        
+        var imageTest = yesterdaySalesImage.image
+        println(imageTest?.size.width)
+        
+      
     }
     
     
@@ -331,6 +402,18 @@ class ViewController: UIViewController {
         
         return formattedLabel
     }
+    
+    // [xOffset: 2.0, yOffset: 2.0] = Center
+    
+    func configCenterPoint(containerView: UIView, xOffset: CGFloat, yOffset: CGFloat) -> CGPoint {
+        var centerPoint = CGPoint()
+        centerPoint.x = containerView.bounds.width/xOffset
+        centerPoint.y = containerView.bounds.height/yOffset
+        return centerPoint
+    }
+    
+
+
     
 }
 
