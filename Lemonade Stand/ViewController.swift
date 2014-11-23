@@ -77,13 +77,13 @@ class ViewController: UIViewController {
     // ---- todayWeatherStartContainer Sub-Views ----
     var todayWeatherStartContainer: UIView!
     var todayWeatherContainer: UIView!
-    var todayWeatherImage = UIImage(named: "Mild")
+    var todayWeatherImage: UIImageView!
     var todayStartButtonContainer: UIView!
     var startButtonImage = UIImage(named: "Start Day Icon")
     
     // ---- yesterdayResultsContainer Sub-Views ----
     var yesterdayWeatherContainer: UIView!
-    var yesterdayWeatherImage = UIImage(named: "Warm")
+    var yesterdayWeatherImage: UIImageView!
     var yesterdayAcidityContainer: UIView!
     var yesterdayAcidityImage = UIImage(named: "Lemonade Icon (small)")
     var yesterdayVisitorsContainer: UIView!
@@ -125,16 +125,24 @@ class ViewController: UIViewController {
     let lemonPrice:Int = 2
     let icePrice:Int = 1
     
-    var dayNumber:Int = 0
+    var customerArray:[Customer] = []
+    var myCustomer = Customer()
+    var yesterdayVisitors = 0
     
+    var dayArray:[DailyStats] = []
     var today = DailyStats() // Also sets defaults
+    var startingMoney = 10
+    var startingLemons = 1
+    var startingIce = 1
     var yesterday = DailyStats()
     
-    
+    var dayNumber:Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        dayArray.append(today)
+        today.weather = randomWeather()
         setupContainerViews()
         updateMainView()
     }
@@ -214,15 +222,71 @@ class ViewController: UIViewController {
         }
     }
     
+    // START BUTTON PRESSED
+    
     func startDayButtonPressed (button: UIButton) {
-//        updateDailyStats(today)
-//        calculateSales(today)
-        yesterday = today
-        dayNumber++
-        updateMainView()
-//        updateDayView()
+
+        if today.lemonMix == 0 || today.iceMix == 0 {
+            showAlertWithText(header: "Today's Brew Not Mixed", message: "Add More Lemons or Ice")
+        } else {
+            var weatherBonus = 0
+            if today.weather == UIImage (named: "Warm") {
+                weatherBonus = Int(arc4random_uniform(UInt32(4))) + 1
+                println ("Size of Weather Bonus: \(weatherBonus)")
+            } else if today.weather == UIImage (named: "Cold") {
+                weatherBonus = (Int(arc4random_uniform(UInt32(3))) + 1) * -1
+                println ("Size of Weather Bonus: \(weatherBonus)")
+            }
+            var numberOfCustomers = Int(arc4random_uniform(UInt32(10))) + 1 + weatherBonus
+            println ("Number of Customers: \(numberOfCustomers)")
+            yesterdayVisitors = numberOfCustomers
+            for numberOfCustomers; numberOfCustomers > 0; numberOfCustomers-- {
+                myCustomer.customerPreference = randomAcidityPreference()
+                println("Customer No. \(customerArray.count + 1) prefers \(myCustomer.customerPreference) Lemonade.")
+                if myCustomer.customerPreference == today.acidityLevel {
+                    myCustomer.didPurchase = true
+                    today.sales++
+                    println("Customer No. \(customerArray.count + 1) purchased today's \(today.acidityLevel) Lemonade!")
+                }
+                customerArray.append(myCustomer)
+            }
+            
+            dayArray.append(today)
+            today.weather = randomWeather()
+            today.lemonMix = 0
+            today.iceMix = 0
+            today.acidityLevel = checkLemonadeStrength(today.lemonMix, ice: today.iceMix)
+            dayNumber = dayArray.count+1
+            today.totalMoney += today.sales
+            today.sales = 0
+            updateMainView()
+            updateYesterdayView()
+            if netWorth(today) < (lemonPrice + icePrice) {
+                showAlertWithText(header: "Not Enough Resources to Continue", message: "The Lemonade Business is Hard")
+                hardReset()
+                setupContainerViews()
+                updateMainView()
+                
+            }
+        }
+    }
+    
+    func hardReset() {
+        today.totalMoney = startingMoney
+        today.iceInventory = startingIce
+        today.lemonInventory = startingLemons
+        today.iceMix = 0
+        today.lemonMix = 0
+        dayNumber = 0
+        customerArray.removeAll(keepCapacity: true)
+        yesterdayVisitors = 0
+        dayArray.removeAll(keepCapacity: true)
         
-        println("button pressed")
+    }
+    
+    func netWorth(financialData: DailyStats) -> Int {
+        var myNetWorth = financialData.totalMoney + (financialData.lemonInventory * lemonPrice) + (financialData.iceInventory * icePrice)
+        return myNetWorth
     }
     
     func checkLemonadeStrength (lemons: Int, ice: Int) -> String {
@@ -272,30 +336,28 @@ class ViewController: UIViewController {
         self.acidityMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 6.0, yOffset: 8.0)
     }
     
+    // UPDATE YESTERDAY (new day) VIEW
+    
     func updateYesterdayView () {
-        self.yesterdayAcidityLabel.text = "\(yesterday.acidityLevel)"
-        self.lemonsInventoryLabel.sizeToFit()
-        self.lemonsInventoryLabel.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 13.0, yOffset: 8.0)
         
-        self.iceInventoryLabel.text = "\(today.iceInventory)"
-        self.iceInventoryLabel.sizeToFit()
-        self.iceInventoryLabel.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 12.0, yOffset: 9.0)
+        self.dayLabel.text = "Day \(dayArray.count)"
+        self.dayLabel.sizeToFit()
+        dayLabel.center = todayLabelContainer.center
         
-        self.lemonsMixLabel.text = "\(today.lemonMix)"
-        self.lemonsMixLabel.sizeToFit()
-        self.lemonsMixLabel.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 10.0, yOffset: 9.0)
+        self.todayWeatherImage.image = today.weather
+        self.yesterdayWeatherImage.image = dayArray[dayArray.count-1].weather
         
-        self.iceMixLabel.text = "\(today.iceMix)"
-        self.iceMixLabel.sizeToFit()
-        self.iceMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: -4.0, yOffset: 9.0)
+        self.yesterdayAcidityLabel.text = "\(dayArray[dayArray.count-1].acidityLevel)"
+        self.yesterdayAcidityLabel.sizeToFit()
+        self.yesterdayAcidityLabel.center = configCenterPoint(yesterdayAcidityContainer, xDivisor: 2.0, yDivisor: 1.35, xOffset: 0.0, yOffset: 0.0)
         
-        self.moneyInventoryLabel.text = "$\(today.totalMoney)"
-        self.moneyInventoryLabel.sizeToFit()
-        self.moneyInventoryLabel.center = configCenterPoint(todayInventoryMoneyContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 18.0)
+        self.yesterdayVisitorsLabel.text = "\(yesterdayVisitors) Visitors"
+        self.yesterdayVisitorsLabel.sizeToFit()
+        self.yesterdayVisitorsLabel.center = configCenterPoint(yesterdayVisitorsContainer, xDivisor: 2.0, yDivisor: 1.35, xOffset: 0.0, yOffset: 0.0)
         
-        self.acidityMixLabel.text = "\(today.acidityLevel)"
-        self.acidityMixLabel.sizeToFit()
-        self.acidityMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 6.0, yOffset: 8.0)
+        self.yesterdaySalesLabel.text = "$\(dayArray[dayArray.count-1].sales) Sales"
+        self.yesterdaySalesLabel.sizeToFit()
+        self.yesterdaySalesLabel.center = configCenterPoint(yesterdaySalesContainer, xDivisor: 2.0, yDivisor: 1.35, xOffset: 0.0, yOffset: 0.0)
     }
     
     
@@ -338,7 +400,7 @@ class ViewController: UIViewController {
         // Add dayLabel to todayLabelContainer
         dayLabel = UILabel()
         configFontLabel(dayLabel, font: defaultFont, fontSize: 20, text: "Day \(dayNumber+1)")
-        dayLabel.center = titlePosition
+        dayLabel.center = todayLabelContainer.center
         todayLabelContainer.addSubview(dayLabel)
         
         // Add todayInnventoryContainer to todayContainer
@@ -381,8 +443,11 @@ class ViewController: UIViewController {
         configFontLabel(todayWeatherLabel, font: defaultFont, fontSize: 18, text: "Today's\nWeather")
         todayWeatherLabel.center = configCenterPoint(todayWeatherContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 0.0)
 
-        todayWeatherContainer.addSubview(configImageView(todayWeatherContainer, myImage: randomWeather(), xOffset: 60, yOffset: 0))
+        todayWeatherImage = UIImageView()
+        todayWeatherImage = configImageView(todayWeatherContainer, myImage: today.weather!, xOffset: 60.0, yOffset: 0.0)
+        todayWeatherContainer.addSubview(todayWeatherImage)
         todayWeatherContainer.addSubview(todayWeatherLabel)
+        
         
         
         // START BUTTON
@@ -489,7 +554,7 @@ class ViewController: UIViewController {
         containerView.addSubview(todayMixLemonsContainer)
         
         lemonsMixLabel = UILabel()
-        configFontLabel(lemonsMixLabel, font: defaultFont, fontSize: 24, text: "0")
+        configFontLabel(lemonsMixLabel, font: defaultFont, fontSize: 24, text: "\(today.lemonMix)")
         
         plusLemonMixButton = UIButton()
         configButtonText(plusLemonMixButton, font: defaultFont, fontSize: 24, text: "+")
@@ -552,7 +617,9 @@ class ViewController: UIViewController {
         configFontLabel(yesterdayWeatherLabel, font: defaultFont, fontSize: 14, text: "Weather")
         yesterdayWeatherLabel.center = configCenterPoint(yesterdayWeatherContainer, xDivisor: 2.0, yDivisor: 1.35, xOffset: 0.0, yOffset: 0.0)
         
-        yesterdayWeatherContainer.addSubview(configImageView(yesterdayWeatherContainer, myImage: self.yesterdayWeatherImage!, xOffset: 0.0, yOffset: 0.0))
+        yesterdayWeatherImage = UIImageView()
+        yesterdayWeatherImage = configImageView(yesterdayWeatherContainer, myImage: UIImage(named: "Warm")!, xOffset: 0.0, yOffset: 0.0)
+        yesterdayWeatherContainer.addSubview(yesterdayWeatherImage)
         yesterdayWeatherContainer.addSubview(yesterdayWeatherLabel)
         
         // YESTERDAY ACIDITY CONTAINTER

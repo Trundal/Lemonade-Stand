@@ -9,6 +9,8 @@
 import Foundation
 
 struct Customer {
-    var customerNumber = 0
-    var customerPreference = "Neutral"
+    var salesDay = 0
+//    var customerName = ""
+    var customerPreference = ""
+    var didPurchase = false
 }
