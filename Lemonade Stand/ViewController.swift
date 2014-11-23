@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     // BUTTONS
     
     // -- Start Button --
-    var startDayButtonButton: UIButton! // Convert to Button when ready
+    var startDayButton: UIButton!
     
     // -- Inventory Buttons --
     var plusLemonInventoryButton: UIButton!
@@ -78,7 +78,7 @@ class ViewController: UIViewController {
     var todayWeatherStartContainer: UIView!
     var todayWeatherContainer: UIView!
     var todayWeatherImage = UIImage(named: "Mild")
-    var todayStartButtonContainer: UIImageView!
+    var todayStartButtonContainer: UIView!
     var startButtonImage = UIImage(named: "Start Day Icon")
     
     // ---- yesterdayResultsContainer Sub-Views ----
@@ -120,13 +120,184 @@ class ViewController: UIViewController {
     let kColumnWeatherStart2:CGFloat = 0.5
     let kColumnYesterday:CGFloat = 0.25
     
+    // STARTING VALUES
+    
+    let lemonPrice:Int = 2
+    let icePrice:Int = 1
+    
+    var dayNumber:Int = 0
+    
+    var today = DailyStats() // Also sets defaults
+    var yesterday = DailyStats()
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         setupContainerViews()
+        updateMainView()
     }
+    
+    // IBActions
+    
+    // INVENTORY FUNCTIONS
+    
+    func buyLemonPressed (button: UIButton) {
+        if today.totalMoney > 0 {
+            today.totalMoney -= lemonPrice
+            today.lemonInventory++
+            updateMainView()
+        }
+    }
+    
+    func sellLemonPressed (button: UIButton) {
+        if today.lemonInventory > 0 {
+            today.totalMoney += lemonPrice
+            today.lemonInventory--
+            updateMainView()
+        }
+    }
+    
+    func buyIcePressed (button: UIButton) {
+        if today.totalMoney > 0 {
+            today.totalMoney -= icePrice
+            today.iceInventory++
+            updateMainView()
+        }
+    }
+    
+    func sellIcePressed (button: UIButton) {
+        if today.iceInventory > 0 {
+            today.totalMoney += icePrice
+            today.iceInventory--
+            updateMainView()
+        }
+    }
+    
+    
+    // MIX FUNTIONS
+    
+    func addLemonPressed (button: UIButton) {
+        if today.lemonInventory > 0 {
+            today.lemonInventory--
+            today.lemonMix++
+            today.acidityLevel = checkLemonadeStrength(today.lemonMix, ice: today.iceMix)
+            updateMainView()
+        }
+    }
+    
+    func removeLemonPressed (button: UIButton) {
+        if today.lemonMix > 0 {
+            today.lemonInventory++
+            today.lemonMix--
+            today.acidityLevel = checkLemonadeStrength(today.lemonMix, ice: today.iceMix)
+            updateMainView()
+        }
+    }
+    
+    func addIcePressed (button: UIButton) {
+        if today.iceInventory > 0 {
+            today.iceInventory--
+            today.iceMix++
+            today.acidityLevel = checkLemonadeStrength(today.lemonMix, ice: today.iceMix)
+            updateMainView()
+        }
+    }
+    
+    func removeIcePressed (button: UIButton) {
+        if today.iceMix > 0 {
+            today.iceInventory++
+            today.iceMix--
+            today.acidityLevel = checkLemonadeStrength(today.lemonMix, ice: today.iceMix)
+            updateMainView()
+        }
+    }
+    
+    func startDayButtonPressed (button: UIButton) {
+//        updateDailyStats(today)
+//        calculateSales(today)
+        yesterday = today
+        dayNumber++
+        updateMainView()
+//        updateDayView()
+        
+        println("button pressed")
+    }
+    
+    func checkLemonadeStrength (lemons: Int, ice: Int) -> String {
+        var mixStrength:String
+        
+        if lemons == 0 || ice == 0 {
+            mixStrength = "Unmixed"
+        } else if Float(lemons / ice) > 1 {
+            mixStrength = "Strong"
+        } else if Float(lemons / ice) == 1 {
+            mixStrength = "Neutral"
+        } else {
+            mixStrength = "Weak"
+        }
+        
+        return mixStrength
+    }
+    
+
+    
+    
+    // UPDATE MAIN VIEW
+    
+    func updateMainView () {
+        self.lemonsInventoryLabel.text = "\(today.lemonInventory)"
+        self.lemonsInventoryLabel.sizeToFit()
+        self.lemonsInventoryLabel.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 13.0, yOffset: 8.0)
+        
+        self.iceInventoryLabel.text = "\(today.iceInventory)"
+        self.iceInventoryLabel.sizeToFit()
+        self.iceInventoryLabel.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 12.0, yOffset: 9.0)
+        
+        self.lemonsMixLabel.text = "\(today.lemonMix)"
+        self.lemonsMixLabel.sizeToFit()
+        self.lemonsMixLabel.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 10.0, yOffset: 9.0)
+       
+        self.iceMixLabel.text = "\(today.iceMix)"
+        self.iceMixLabel.sizeToFit()
+        self.iceMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: -4.0, yOffset: 9.0)
+        
+        self.moneyInventoryLabel.text = "$\(today.totalMoney)"
+        self.moneyInventoryLabel.sizeToFit()
+        self.moneyInventoryLabel.center = configCenterPoint(todayInventoryMoneyContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 18.0)
+        
+        self.acidityMixLabel.text = "\(today.acidityLevel)"
+        self.acidityMixLabel.sizeToFit()
+        self.acidityMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 6.0, yOffset: 8.0)
+    }
+    
+    func updateYesterdayView () {
+        self.yesterdayAcidityLabel.text = "\(yesterday.acidityLevel)"
+        self.lemonsInventoryLabel.sizeToFit()
+        self.lemonsInventoryLabel.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 13.0, yOffset: 8.0)
+        
+        self.iceInventoryLabel.text = "\(today.iceInventory)"
+        self.iceInventoryLabel.sizeToFit()
+        self.iceInventoryLabel.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 12.0, yOffset: 9.0)
+        
+        self.lemonsMixLabel.text = "\(today.lemonMix)"
+        self.lemonsMixLabel.sizeToFit()
+        self.lemonsMixLabel.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 10.0, yOffset: 9.0)
+        
+        self.iceMixLabel.text = "\(today.iceMix)"
+        self.iceMixLabel.sizeToFit()
+        self.iceMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: -4.0, yOffset: 9.0)
+        
+        self.moneyInventoryLabel.text = "$\(today.totalMoney)"
+        self.moneyInventoryLabel.sizeToFit()
+        self.moneyInventoryLabel.center = configCenterPoint(todayInventoryMoneyContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 18.0)
+        
+        self.acidityMixLabel.text = "\(today.acidityLevel)"
+        self.acidityMixLabel.sizeToFit()
+        self.acidityMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 6.0, yOffset: 8.0)
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -166,7 +337,7 @@ class ViewController: UIViewController {
         
         // Add dayLabel to todayLabelContainer
         dayLabel = UILabel()
-        configFontLabel(dayLabel, font: defaultFont, fontSize: 20, text: "Day 1")
+        configFontLabel(dayLabel, font: defaultFont, fontSize: 20, text: "Day \(dayNumber+1)")
         dayLabel.center = titlePosition
         todayLabelContainer.addSubview(dayLabel)
         
@@ -209,17 +380,22 @@ class ViewController: UIViewController {
         todayWeatherLabel.numberOfLines = 2
         configFontLabel(todayWeatherLabel, font: defaultFont, fontSize: 18, text: "Today's\nWeather")
         todayWeatherLabel.center = configCenterPoint(todayWeatherContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 0.0)
-        
-        todayWeatherContainer.addSubview(configImageView(todayWeatherContainer, myImage: self.todayWeatherImage!, xOffset: 60, yOffset: 0))
+
+        todayWeatherContainer.addSubview(configImageView(todayWeatherContainer, myImage: randomWeather(), xOffset: 60, yOffset: 0))
         todayWeatherContainer.addSubview(todayWeatherLabel)
         
         
         // START BUTTON
         
-        todayStartButtonContainer = UIImageView(frame: CGRect(x: todayWeatherContainer.frame.width, y: 0, width: todayWeatherStartContainer.bounds.width * kColumnWeatherStart2, height: todayWeatherStartContainer.bounds.height))
+        todayStartButtonContainer = UIView(frame: CGRect(x: todayWeatherContainer.frame.width, y: 0, width: todayWeatherStartContainer.bounds.width * kColumnWeatherStart2, height: todayWeatherStartContainer.bounds.height))
         todayWeatherStartContainer.addSubview(todayStartButtonContainer)
         
-        todayStartButtonContainer.addSubview(configImageView(todayStartButtonContainer, myImage: self.startButtonImage!, xOffset: 0, yOffset: 0))
+        startDayButton = UIButton(frame: CGRect(x: 0, y: 0, width: 115, height: 48))
+        startDayButton.setImage(startButtonImage?, forState: UIControlState.Normal)
+        startDayButton.center = configCenterPoint(todayStartButtonContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0, yOffset: 0)
+        startDayButton.addTarget(self, action: "startDayButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+
+        todayStartButtonContainer.addSubview(startDayButton)
     }
     
     
@@ -235,7 +411,6 @@ class ViewController: UIViewController {
         
         moneyInventoryLabel = UILabel()
         configFontLabel(moneyInventoryLabel, font: defaultFont, fontSize: 24, text: "$10")
-        moneyInventoryLabel.center = configCenterPoint(todayInventoryMoneyContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 0.0, yOffset: 18.0)
         
         todayInventoryMoneyContainer.addSubview(configImageView(todayInventoryMoneyContainer, myImage: self.inventoryMoneyImage!, xOffset: 0, yOffset: 0))
         todayInventoryMoneyContainer.addSubview(moneyInventoryLabel)
@@ -248,17 +423,16 @@ class ViewController: UIViewController {
         
         lemonsInventoryLabel = UILabel()
         configFontLabel(lemonsInventoryLabel, font: defaultFont, fontSize: 24, text: "1")
-        lemonsInventoryLabel.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 13.0, yOffset: 8.0)
         
         plusLemonInventoryButton = UIButton()
         configButtonText(plusLemonInventoryButton, font: defaultFont, fontSize: 24, text: "+")
         plusLemonInventoryButton.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 4.0, xOffset: 13.0, yOffset: 5.0)
-        plusLemonInventoryButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        plusLemonInventoryButton.addTarget(self, action: "buyLemonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         minusLemonInventoryButton = UIButton()
         configButtonText(minusLemonInventoryButton, font: defaultFont, fontSize: 40, text: "-")
         minusLemonInventoryButton.center = configCenterPoint(todayInventoryLemonsContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 13.0, yOffset: 8.0)
-        minusLemonInventoryButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        minusLemonInventoryButton.addTarget(self, action: "sellLemonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         todayInventoryLemonsContainer.addSubview(configImageView(todayInventoryLemonsContainer, myImage: self.inventoryLemonsImage!, xOffset: 0.0, yOffset: 10.0))
         todayInventoryLemonsContainer.addSubview(lemonsInventoryLabel)
@@ -274,17 +448,16 @@ class ViewController: UIViewController {
         
         iceInventoryLabel = UILabel()
         configFontLabel(iceInventoryLabel, font: defaultFont, fontSize: 24, text: "1")
-        iceInventoryLabel.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 12.0, yOffset: 9.0)
         
         plusIceInventoryButton = UIButton()
         configButtonText(plusIceInventoryButton, font: defaultFont, fontSize: 24, text: "+")
         plusIceInventoryButton.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 4.0, xOffset: 12.0, yOffset: 5.0)
-        plusIceInventoryButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        plusIceInventoryButton.addTarget(self, action: "buyIcePressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         minusIceInventoryButton = UIButton()
         configButtonText(minusIceInventoryButton, font: defaultFont, fontSize: 40, text: "-")
         minusIceInventoryButton.center = configCenterPoint(todayInventoryIceContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 12.0, yOffset: 8.0)
-        minusIceInventoryButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        minusIceInventoryButton.addTarget(self, action: "sellIcePressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         todayInventoryIceContainer.addSubview(configImageView(todayInventoryIceContainer, myImage: self.inventoryIceImage!, xOffset: 0.0, yOffset: 10.0))
         todayInventoryIceContainer.addSubview(iceInventoryLabel)
@@ -304,8 +477,7 @@ class ViewController: UIViewController {
         containerView.addSubview(todayMixAcidityContainer)
         
         acidityMixLabel = UILabel()
-        configFontLabel(acidityMixLabel, font: defaultFont, fontSize: 18, text: "Strong (.6)")
-        acidityMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 1.0, xOffset: 13.0, yOffset: -10.0)
+        configFontLabel(acidityMixLabel, font: defaultFont, fontSize: 18, text: "\(today.acidityLevel)")
         
         todayMixAcidityContainer.addSubview(configImageView(todayMixAcidityContainer, myImage: self.mixAcidityImage!, xOffset: 10.0, yOffset: 5.0))
         todayMixAcidityContainer.addSubview(acidityMixLabel)
@@ -318,17 +490,16 @@ class ViewController: UIViewController {
         
         lemonsMixLabel = UILabel()
         configFontLabel(lemonsMixLabel, font: defaultFont, fontSize: 24, text: "0")
-        lemonsMixLabel.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: 10.0, yOffset: 9.0)
         
         plusLemonMixButton = UIButton()
         configButtonText(plusLemonMixButton, font: defaultFont, fontSize: 24, text: "+")
         plusLemonMixButton.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 4.0, xOffset: 12.0, yOffset: 5.0)
-        plusLemonMixButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        plusLemonMixButton.addTarget(self, action: "addLemonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         minusLemonMixButton = UIButton()
         configButtonText(minusLemonMixButton, font: defaultFont, fontSize: 40, text: "-")
         minusLemonMixButton.center = configCenterPoint(todayMixLemonsContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 12.0, yOffset: 8.0)
-        minusLemonMixButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        minusLemonMixButton.addTarget(self, action: "removeLemonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         todayMixLemonsContainer.addSubview(configImageView(todayMixLemonsContainer, myImage: self.mixLemonsImage!, xOffset: 10.0, yOffset: 10.0))
         todayMixLemonsContainer.addSubview(lemonsMixLabel)
@@ -343,17 +514,16 @@ class ViewController: UIViewController {
         
         iceMixLabel = UILabel()
         configFontLabel(iceMixLabel, font: defaultFont, fontSize: 24, text: "0")
-        iceMixLabel.center = configCenterPoint(todayMixAcidityContainer, xDivisor: 2.0, yDivisor: 2.0, xOffset: -4.0, yOffset: 9.0)
         
         plusIceMixButton = UIButton()
         configButtonText(plusIceMixButton, font: defaultFont, fontSize: 24, text: "+")
         plusIceMixButton.center = configCenterPoint(todayMixIceContainer, xDivisor: 2.0, yDivisor: 4.0, xOffset: 12.0, yOffset: 5.0)
-        plusIceMixButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        plusIceMixButton.addTarget(self, action: "addIcePressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         minusIceMixButton = UIButton()
         configButtonText(minusIceMixButton, font: defaultFont, fontSize: 40, text: "-")
         minusIceMixButton.center = configCenterPoint(todayMixIceContainer, xDivisor: 2.0, yDivisor: 1.25, xOffset: 12.0, yOffset: 8.0)
-        minusIceMixButton.addTarget(self, action: "resetButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        minusIceMixButton.addTarget(self, action: "removeIcePressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         todayMixIceContainer.addSubview(configImageView(todayMixIceContainer, myImage: self.mixIceImage!, xOffset: 10.0, yOffset: 10.0))
         todayMixIceContainer.addSubview(iceMixLabel)
@@ -464,7 +634,34 @@ class ViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
     }
-
+    
+    func randomAcidityPreference() -> String {
+        var myCustomerPreference:String = "Weak"
+        
+        var randomNumber = Int(arc4random_uniform(UInt32(10)))
+        
+        if randomNumber <= 4 {
+            myCustomerPreference = "Strong"
+        } else if randomNumber <= 6 {
+            myCustomerPreference = "Neutral"
+        }
+        
+        return myCustomerPreference
+    }
+    
+    func randomWeather() -> UIImage {
+        var myWeatherImage = UIImage(named: "Warm")
+        
+        var randomNumber = Int(arc4random_uniform(UInt32(3)))
+        
+        if randomNumber == 0 {
+            myWeatherImage = UIImage(named: "Mild")
+        } else if randomNumber == 1 {
+            myWeatherImage = UIImage(named: "Cold")
+        }
+        
+        return myWeatherImage!
+    }
     
 }
 
