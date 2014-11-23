@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		D73309571A21399700985576 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73309561A21399700985576 /* Customer.swift */; };
 		D7870E751A2155B7005ABB20 /* DailyStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7870E741A2155B7005ABB20 /* DailyStats.swift */; };
-		D7870E791A215C37005ABB20 /* DayEndResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7870E781A215C37005ABB20 /* DayEndResults.swift */; };
+		D7C514241A2249AF0094896D /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C514231A2249AF0094896D /* Price.swift */; };
+		D7C514261A2249D10094896D /* ViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C514251A2249D10094896D /* ViewLayout.swift */; };
 		D7F492371A1BE08500F33ABD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F492361A1BE08500F33ABD /* AppDelegate.swift */; };
 		D7F492391A1BE08500F33ABD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F492381A1BE08500F33ABD /* ViewController.swift */; };
 		D7F4923C1A1BE08500F33ABD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7F4923A1A1BE08500F33ABD /* Main.storyboard */; };
@@ -31,7 +32,8 @@
 /* Begin PBXFileReference section */
 		D73309561A21399700985576 /* Customer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		D7870E741A2155B7005ABB20 /* DailyStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DailyStats.swift; sourceTree = "<group>"; };
-		D7870E781A215C37005ABB20 /* DayEndResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayEndResults.swift; sourceTree = "<group>"; };
+		D7C514231A2249AF0094896D /* Price.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
+		D7C514251A2249D10094896D /* ViewLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLayout.swift; sourceTree = "<group>"; };
 		D7F492311A1BE08500F33ABD /* Lemonade Stand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lemonade Stand.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7F492351A1BE08500F33ABD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7F492361A1BE08500F33ABD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -85,7 +87,8 @@
 			children = (
 				D7F492361A1BE08500F33ABD /* AppDelegate.swift */,
 				D7F492381A1BE08500F33ABD /* ViewController.swift */,
-				D7870E781A215C37005ABB20 /* DayEndResults.swift */,
+				D7C514231A2249AF0094896D /* Price.swift */,
+				D7C514251A2249D10094896D /* ViewLayout.swift */,
 				D7870E741A2155B7005ABB20 /* DailyStats.swift */,
 				D73309561A21399700985576 /* Customer.swift */,
 				D7F4923A1A1BE08500F33ABD /* Main.storyboard */,
@@ -222,10 +225,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D73309571A21399700985576 /* Customer.swift in Sources */,
-				D7870E791A215C37005ABB20 /* DayEndResults.swift in Sources */,
+				D7C514261A2249D10094896D /* ViewLayout.swift in Sources */,
 				D7F492391A1BE08500F33ABD /* ViewController.swift in Sources */,
 				D7870E751A2155B7005ABB20 /* DailyStats.swift in Sources */,
 				D7F492371A1BE08500F33ABD /* AppDelegate.swift in Sources */,
+				D7C514241A2249AF0094896D /* Price.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

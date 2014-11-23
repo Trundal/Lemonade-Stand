@@ -18,6 +18,16 @@ struct DailyStats {
     var weather = UIImage(named: "Warm")
     var acidityLevel = "Unmixed"
     var sales = 0
+    var visitors = 0
+    
+    init(startMoney: Int, startLemons:Int, startIce: Int, startSales: Int, startVisitors: Int, startAcidity: String) {
+        totalMoney = startMoney
+        lemonInventory = startLemons
+        iceInventory = startIce
+        sales = startSales
+        visitors = startVisitors
+        acidityLevel = startAcidity
+    }
 }
 
 
